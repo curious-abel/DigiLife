@@ -1,0 +1,39 @@
+{%extends 'base.html'%}
+
+{%block content%}
+    <p style="text-align: center; background-color: aqua;"> WELCOME {{user.username}}</p>
+    
+    <ol>
+        {%for i in task%}
+        <li>
+            <div class="card">
+                <div class="card-body py-2">
+                    <div class="row">
+                        <div class="col-8">
+                            <button style="background-color: rgb(65, 65, 15);" class="btn ">
+                                <a style="color: white; font-weight: bold;" href="{{url_for('note', task_id=i.id)}}">{{i.task_name}}</a>   
+                            </button>
+                        </div>
+                        <div class="col-1">
+                            
+                                <a class="btn" href="{{url_for('edit_task', id=i.id)}}"><i class="bi bi-pencil"></i></a>
+                            
+                        </div>
+                        <div class="col-1 ">
+                     
+                            <a class="btn btn-danger ms-2" href="{{url_for('delete_task', id=i.id)}}"><i class="bi bi-trash"></i></a>
+                           
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </li>
+        {%endfor%}
+    </ol>
+    
+    <form class="d-flex m-2 col-12" method="POST">
+        <input class="form-control" type="text" name="task_name" placeholder="enter task">
+        <button class="btn btn-success">create task</button>
+    </form>
+
+{%endblock%}

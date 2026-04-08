@@ -1,0 +1,12 @@
+{%extends 'base.html'%}
+
+{%block content%}
+<div>
+<form action="/edit/{{note.id}}" method="POST">
+    <input class="form-control" type="text" name="content" value="{{note.content}}">
+    <button class="btn mt-1 btn-success col-12">Update</button>
+</form>
+</div>
+
+{%endblock%}
+

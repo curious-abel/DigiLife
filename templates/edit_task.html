@@ -1,0 +1,9 @@
+{%extends 'base.html'%}
+
+{%block content%}
+<form class="d-flex mt-3" action="/edit_task/{{task.id}}" method="POST">
+    <input class="form-control" type="text" name="task_name" value="{{task.task_name}}" placeholder="enter task name">
+    <button class="btn btn-success btn-success">Update</button>
+</form>
+
+{%endblock%}

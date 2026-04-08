@@ -1,0 +1,60 @@
+{%extends 'base.html'%}
+
+{%block content%}
+<p style="text-align: center; margin-top: 5px; font-weight: bold; background-color: aqua;">{{task.task_name}}</p>
+
+
+    <ol>
+        
+        {%for i in note%}
+        <li>
+            <div class="card mt-1">
+                <div class="card-body py-2">
+                    <div class="row">
+                        <div class="col-9 col-md-11">
+                            {{i.content}}   
+                        </div>
+                        <div class="col-3 col-md-1 d-flex " >
+                            <form action="/update/{{i.id}}", method="POST">
+                                <input class="form-check-input big-checkbox" type="checkbox" name="completed" onchange="this.form.submit()"
+                                {%if i.status%} checked{%endif%}
+                                >
+                            </form>
+                            
+                            <a class="btn btn-sm" href="{{url_for('edit', id=i.id)}}"><i class="bi bi-pencil-square"></i></a>
+                                                
+                            <a class="btn btn-sm "  href="{{url_for('delete', id=i.id)}}"><i class="bi bi-trash"></i></a>
+                            
+                        </div>
+                       
+          
+
+                    </div>
+                </div>
+            </div>       
+
+        </li>
+        {%endfor%}
+   
+
+        <li>
+            <form class="d-flex mt-2" method="POST">
+                <input class="form-control" type="text" name="content">
+                <button class="btn btn-success">add</button>
+            </form>
+        </li>
+    </ol>
+
+    <div class="row px-3  ">
+        <div class="col-3 col-md-1">
+            <p style=" font-weight: bold; ">Progress: </p>
+        </div>
+        
+        <div class="card col-9 px-0 col-md-11" style="height: 21px;   display: inline-block;">
+            <div style="width: {{task.percentage_done}}%; height: 20px;  background-color: green;
+            text-align: end; color: white; font-weight: bold; border-radius:4px;">{{task.percentage_done}}%
+            </div>
+        </div>
+    </div>
+
+{%endblock%}

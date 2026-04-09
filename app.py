@@ -22,7 +22,7 @@ login_manager.init_app(app)
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/home', methods=['GET', 'POST'])
 @login_required
 def home():
     task = current_user.task
@@ -64,7 +64,7 @@ def register():
         return redirect(url_for('login'))  
     return render_template('register.html') 
 
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/', methods=['GET', 'POST'])
 def login():
     if request.method=='POST':
         email = request.form.get('email')

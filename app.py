@@ -7,10 +7,10 @@ from flask_login import current_user, login_user, login_required, LoginManager, 
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
+app.config['SQLALCHEMY_DATABASE_URI'] =  os.environ.get('DATABASE_URL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-app.config['SECRET_KEY'] = app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'fallback-key')
+app.config['SECRET_KEY'] = app.config['SECRET_KEY'] =  os.environ.get('SECRET_KEY', 'fallback-key')
 db.init_app(app)
 migrate = Migrate(app, db)
 
@@ -22,7 +22,7 @@ login_manager.init_app(app)
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-@app.route('/home', methods=['GET', 'POST'])
+@app.route('/', methods=['GET', 'POST'])
 @login_required
 def home():
     task = current_user.task
@@ -64,7 +64,7 @@ def register():
         return redirect(url_for('login'))  
     return render_template('register.html') 
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method=='POST':
         email = request.form.get('email')
@@ -76,7 +76,7 @@ def login():
             return redirect(url_for('home'))
         else:
             flash('wrong login details! try again', 'danger')
-            return redirect('login')
+            return redirect(url_for('login'))
     return render_template('login.html')
 
 @app.route('/note/<int:task_id>', methods=['GET', 'POST'])
@@ -216,7 +216,7 @@ def logout():
 
 if __name__=='__main__':
     #with app.app_context():
-       # db.drop_all()
-     #   db.create_all()
+     #   db.drop_all()
+    #    db.create_all()
     app.run(debug=False)
 

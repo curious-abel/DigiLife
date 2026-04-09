@@ -212,8 +212,8 @@ def logout():
     return redirect(url_for('login'))
 
 if __name__=='__main__':
-    with app.app_context():
+    #with app.app_context():
        # db.drop_all()
-        db.create_all()
+     #   db.create_all()
     app.run(debug=False)
 

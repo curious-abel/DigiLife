@@ -1,5 +1,5 @@
-from flask import Flask, redirect, render_template, request, url_for, flash
-from models import db, User, Task, Note
+from flask import Flask, redirect, render_template, request, url_for, flash, jsonify, json
+from models import db, User, Task, Note, Jote
 from flask_migrate import Migrate
 import os
 from flask_login import current_user, login_user, login_required, LoginManager, logout_user
@@ -7,7 +7,7 @@ from flask_login import current_user, login_user, login_required, LoginManager, 
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] =  os.environ.get('DATABASE_URL')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL') or 'sqlite:///note.db' 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 app.config['SECRET_KEY'] = app.config['SECRET_KEY'] =  os.environ.get('SECRET_KEY', 'fallback-key')
@@ -194,6 +194,46 @@ def change_password():
             return redirect(url_for('login'))
     return render_template('change_password.html')
 
+@app.route('/jotter')
+def jotter():
+    return render_template('jotter.html')
+
+@app.route('/notes')
+def notes():
+    notes = Jote.query.order_by(Jote.id.desc()).all()
+    return jsonify([{'id': note.id,
+                    'title': note.title,
+                    'content': note.content} for note in notes])
+
+@app.route('/delete_note/<int:id>', methods=['POST'])
+def delete_note(id):
+    note = Jote.query.get_or_404(id)
+    db.session.delete(note)
+    db.session.commit()
+    return jsonify({'status': 'done'})
+
+@app.route('/create_note', methods=['POST'])
+def create_note():
+    note = Jote()
+    db.session.add(note)
+    db.session.commit()
+    return jsonify({'id': note.id})
+
+@app.route('/load_note/<int:id>')
+def load_note(id):
+    note = Jote.query.get_or_404(id)
+    return jsonify({'id': note.id, 'title': note.title, 'content': note.content})
+
+@app.route('/save_note/<int:id>', methods=['POST'])
+def save(id):
+    data = request.json
+    note = Jote.query.get_or_404(id)
+    capital = data.get('title', '').upper()
+    note.title = capital
+    note.content = data.get('content', '')
+    db.session.commit()
+    return jsonify({'status': 'ok'})
+
 @app.route('/check-users')
 @login_required
 def check_users():
@@ -217,7 +257,8 @@ def logout():
 if __name__=='__main__':
     #with app.app_context():
      #   db.drop_all()
-    #    db.create_all()
+        #db.create_all()
     port = int(os.environ.get("PORT", 10000))  # fallback to 10000 if PORT not set
     app.run(host="0.0.0.0", port=port, debug=False)
+    #app.run(debug=True)
 

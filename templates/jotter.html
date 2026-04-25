@@ -1,0 +1,106 @@
+{%extends 'base.html'%}
+
+{%block content%}
+
+
+<div id="container" class="row">
+    <div class="col-4 col-md-3" id="side-bar"></div>
+    <div class="col-8 col-md-9" id="note-content">
+        <button onclick="format('underline')"><i class="bi bi-type-underline"></i></button>
+        <button onclick="format('italic')"><i class="bi bi-type-italic"></i></button>
+        <button onclick="format('bold')"><i class="bi bi-type-bold"></i></button>
+        <button onclick="format('undo')"><i class="bi bi-arrow-counterclockwise"></i></button>
+        <button onclick="format('redo')"><i class="bi bi-arrow-clockwise"></i></button>
+        <input id="title" type="text" class="col-12" placeholder="title">
+        <div id="content" contenteditable="true">
+        </div>
+    </div>
+</div>
+<button class="btn btn-outline-success" id="addBtn">+Add Note</button>
+<script>
+    const sideBar = document.getElementById('side-bar')
+    const addBtn = document.getElementById('addBtn')
+    const content = document.getElementById('content')
+    const title = document.getElementById('title')
+    let NoteId=null;
+    let timer;
+    window.onload = loadNotes
+
+    async function loadNotes() {
+        const res = await fetch('/notes')
+        const note = await res.json()
+        sideBar.innerHTML=''
+        note.forEach(addNoteList)
+       
+    }
+
+    function addNoteList(note){
+        btn = document.createElement('button')
+        delBtn = document.createElement('button')
+        btn.textContent = note.title||'no title'
+        delBtn.textContent = '❌'
+        btn.id = 'newBtn'
+        btn.classList.add('btn', 'col-9', 'btn-outline-primary');
+        delBtn.classList.add('btn', 'col-3');
+        delBtn.id = 'delBtn'
+        //btn.textContent = note.title;
+        //btn.title = note.title;   // 👈 this is the tooltip
+        delBtn.onclick = (e)=> {e.stopPropagation()
+            deleteNote(note.id)
+        }
+        btn.onclick = ()=> loadNote(note.id)
+        sideBar.appendChild(btn)
+        sideBar.appendChild(delBtn)
+        
+        
+    }
+
+async function loadNote(id) {
+    console.log(`i am touching number ${id}`)
+    const res = await fetch(`/load_note/${id}`)
+    const data = await res.json()
+    NoteId = data.id
+    console.log(`${data.id} return`)
+    title.value = data.title
+    content.innerHTML = data.content
+}
+
+    async function deleteNote(id) {
+        console.log(`trying to delete... ${id}`)
+        await fetch(`/delete_note/${id}`, {method: 'POST'}) 
+        loadNotes()
+    }
+    
+    addBtn.addEventListener('click', async ()=>{
+        const res = await fetch('/create_note', {method: 'POST'})
+        const data = await res.json()
+        NoteId = data.id
+        title.value = ''
+        content.innerHTML = ''
+        loadNotes()
+    })
+    console.log(NoteId)
+    async function saveNote (id) {
+        const res = await fetch(`/save_note/${id}`, {method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({title: title.value, 
+                content: content.innerHTML})
+        });
+        console.log(`saving number ${NoteId}`)
+        loadNotes()
+    }
+
+    title.addEventListener('input', ()=>{
+       clearTimeout(timer);
+       timer = setTimeout(()=>saveNote(NoteId), 1000)
+    })
+    content.addEventListener('input', ()=>{
+       clearTimeout(timer);
+       timer = setTimeout(()=>saveNote(NoteId), 1000)
+    })
+
+    function format(prop){
+        document.execCommand(prop, false)
+    }
+</script>
+{%endblock%}

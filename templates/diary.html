@@ -1,0 +1,88 @@
+{%extends 'base.html'}
+
+{%block content%}
+<p>Expectation</p>
+    <p>Reminder</p>
+    <ol id="numbering">
+
+    </ol>
+    <button id="createReminder">create reminder</button>
+    <script>
+        const numbering = document.getElementById('numbering')
+const creatReminder = document.getElementById('createReminder')
+
+
+window.onload = showEvents
+async function showEvents() {
+    const res = await fetch('/events')
+    const events = await res.json()
+    numbering.innerHTML = ''
+    events.forEach(getEvent)
+}
+
+function getEvent(event){
+    const li = document.createElement('li')
+    li.className = 'list'
+    const div = document.createElement('div')
+    div.className = 'reminder'
+    div.contentEditable = 'true'
+    div.innerHTML = event.event
+    div.oninput = ()=> {
+        clearTimeout(timer)
+        timer = setTimeout(()=>{
+            saving(event.id)
+        }, 1000)
+    }
+    const date = document.createElement('input')
+    date.type = 'date'
+    date.className = 'date'
+    date.id = 'date'
+    date.oninput = ()=> {
+        clearTimeout(timer)
+        timer = setTimeout(()=>{
+            saving(event.id)
+        }, 1000)
+    }
+    date.value = event.time
+    const eventDate = new Date(event.time);
+    const today = new Date().toISOString().split('T')[0];
+    if (event.time < today) {
+        deleteEvent(event.id);
+    }
+            const myToday = new Date();
+            myToday.setHours(0, 0, 0, 0);
+            eventDate.setHours(0, 0, 0, 0);
+
+            const diff = eventDate - myToday;
+            const diffDays = Math.ceil(diff / (1000 * 60 * 60 * 24));
+
+            if (diffDays < 3) {
+                div.style.color = 'red';
+            }
+
+    li.appendChild(div) 
+    li.appendChild(date)
+    numbering.appendChild(li)
+
+    async function saving(id) {
+        await fetch(`/saving/${id}`, {method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({reminder: div.innerHTML, date: date.value})
+    })
+    showEvents
+}
+}   
+
+async function deleteEvent(id) {
+    await fetch(`/delEvent/${id}`, {method: 'POST'})
+    showEvents()
+}
+
+createReminder.addEventListener('click', async ()=>{
+    await fetch('/create', {method: 'POST'})
+    showEvents()
+})
+let timer;
+    </script>
+
+{%endblock%}

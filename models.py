@@ -39,3 +39,8 @@ class Jote(db.Model):
     content  = db.Column(db.Text)
     date_jotted = db.Column(db.DateTime, default=datetime.now)
     title = db.Column(db.String(150))
+
+class Reminder(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    content = db.Column(db.String(500), default='')
+    exp_date = db.Column(db.DateTime)

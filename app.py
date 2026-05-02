@@ -1,13 +1,14 @@
 from flask import Flask, redirect, render_template, request, url_for, flash, jsonify, json
-from models import db, User, Task, Note, Jote
+from models import db, User, Task, Note, Jote, Reminder
 from flask_migrate import Migrate
 import os
+from datetime import datetime
 from flask_login import current_user, login_user, login_required, LoginManager, logout_user
 
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL') or 'sqlite:///note.db' 
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL') #'sqlite:///note.db' 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 app.config['SECRET_KEY'] = app.config['SECRET_KEY'] =  os.environ.get('SECRET_KEY', 'fallback-key')
@@ -233,6 +234,42 @@ def save(id):
     note.content = data.get('content', '')
     db.session.commit()
     return jsonify({'status': 'ok'})
+
+@app.route('/diary')
+def reminder():
+    return render_template('diary.html')
+    
+@app.route('/events')
+def events():
+    events = Reminder.query.order_by(Reminder.exp_date).all()
+    return jsonify([{'event': event.content, 'time': event.exp_date.strftime("%Y-%m-%d") if event.exp_date else None, 'id': event.id} for event in events])
+
+@app.route('/create', methods=['POST'])
+def create():
+    print('print something')
+    event = Reminder()
+    db.session.add(event)
+    db.session.commit()
+    return jsonify({'status': 'ok'})
+
+@app.route('/saving/<int:id>', methods=['POST'])
+def saving(id):
+    data = request.get_json()
+    reminder = Reminder.query.get_or_404(id)
+    reminder.content = data.get('reminder')
+    date = data.get('date')
+    converted_date = datetime.strptime(date, "%Y-%m-%d").date()
+    reminder.exp_date = converted_date
+    print(reminder.content)
+    db.session.commit()
+    return jsonify({'status': 'ok'})
+
+@app.route('/delEvent/<int:id>', methods=['POST'])
+def delete_event(id):
+    event = Reminder.query.get_or_404(id)
+    db.session.delete(event)
+    db.session.commit()
+    return jsonify({'status': 'done'})
 
 @app.route('/check-users')
 @login_required

@@ -9,7 +9,7 @@ from flask_login import current_user, login_user, login_required, LoginManager, 
 app = Flask(__name__)
 
 app.config['SQLALCHEMY_DATABASE_URI'] =os.environ.get('DATABASE_URL')# 'sqlite:///note.db' 
-# #
+
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 app.config['SECRET_KEY'] = app.config['SECRET_KEY'] =  os.environ.get('SECRET_KEY', 'fallback-key')

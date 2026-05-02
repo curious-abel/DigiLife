@@ -36,4 +36,10 @@ button{
     border-color: rgb(12, 228, 12);
     background-color: white;
     border-style: solid;
+    border-radius: 4px;
+    margin-left: 30px;
+}
+.reminder{
+    min-height: 20px;
+    padding: 4px;
 }

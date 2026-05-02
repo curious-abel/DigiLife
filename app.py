@@ -8,7 +8,8 @@ from flask_login import current_user, login_user, login_required, LoginManager, 
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL') #'sqlite:///note.db' 
+app.config['SQLALCHEMY_DATABASE_URI'] =os.environ.get('DATABASE_URL')# 'sqlite:///note.db' 
+# #
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 app.config['SECRET_KEY'] = app.config['SECRET_KEY'] =  os.environ.get('SECRET_KEY', 'fallback-key')
@@ -246,7 +247,6 @@ def events():
 
 @app.route('/create', methods=['POST'])
 def create():
-    print('print something')
     event = Reminder()
     db.session.add(event)
     db.session.commit()
@@ -294,7 +294,7 @@ def logout():
 if __name__=='__main__':
     #with app.app_context():
      #   db.drop_all()
-        #db.create_all()
+    #    db.create_all()
     port = int(os.environ.get("PORT", 10000))  # fallback to 10000 if PORT not set
     app.run(host="0.0.0.0", port=port, debug=False)
     #app.run(debug=True)

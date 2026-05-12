@@ -1,36 +1,57 @@
 
 #content{
-    min-height: 300px;
+    min-height: 200px;
     outline-color: greenyellow;
     background-color: aliceblue;
     padding: 15px;
+    margin: 0;
+    box-sizing: border-box;
+}
+.list{
+    margin-top: 4px;
 }
 #container{
 padding-top: 20px;
+
 }
 #title{
     height: 30px;
     border: none;
     outline-color: blue;
-    height: 40px;
+
     padding-left: 10px;
     padding-right: 10px;
     margin-top: 10px;
+     
 }
 #delBtn{
-    
+    margin: 0;
     text-align: left;
-    padding-right: 15px;
+    padding: 0;
+}
+#color{
+border: none;
+height: 20px;
+}
+#bold{margin-left: 0;}
+#format{
+    margin: 0;
 }
 #newBtn{
     border-color: blue ;
     text-align: left;
     white-space: nowrap;
+    height: 25px;
     overflow: hidden;
+    padding: 0;
     text-overflow: ellipsis;
+    font-size: 12px;
+    margin: 5px;
+    width: 55px;
 }
 #addBtn{
   border-color: green;
+  margin: 0;
 }
 button{
     border-color: rgb(12, 228, 12);
@@ -41,5 +62,22 @@ button{
 }
 .reminder{
     min-height: 20px;
+    border-radius: 5px;
+    border-style: solid;
+    border-width: 2px;
     padding: 4px;
+    margin: 0;
+    border-color: rgb(131, 131, 131);
+   
+}
+#side-bar{
+    box-sizing: border-box;
+    padding: 0;
+    padding-left: 8px;
+}
+
+@media(min-width: 740px){
+    #newBtn{
+        min-width: 150px;
+    }
 }

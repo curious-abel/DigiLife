@@ -8,15 +8,15 @@
     <button id="createReminder">create reminder</button>
     <script>
         const numbering = document.getElementById('numbering')
-const creatReminder = document.getElementById('createReminder')
+        const creatReminder = document.getElementById('createReminder')
 
 
-window.onload = showEvents
-async function showEvents() {
-    const res = await fetch('/events')
-    const events = await res.json()
-    numbering.innerHTML = ''
-    events.forEach(getEvent)
+        window.onload = showEvents
+        async function showEvents() {
+            const res = await fetch('/events')
+            const events = await res.json()
+            numbering.innerHTML = ''
+            events.forEach(getEvent)
 }
 
 function getEvent(event){
@@ -36,6 +36,20 @@ function getEvent(event){
     date.type = 'date'
     date.className = 'date'
     date.id = 'date'
+    const color = document.createElement('input')
+    color.type = 'color'
+    color.id = 'color'
+    bold = document.createElement('button')
+    bold.textContent = 'B'
+    bold.id = 'bold'
+    bold.onclick = ()=>textBold('bold')
+    color.oninput = ()=>{
+        clearTimeout(timer)
+        timer = setTimeout(()=>{
+        saving(event.id)
+        }, 1000)
+    }
+
     date.oninput = ()=> {
         clearTimeout(timer)
         timer = setTimeout(()=>{
@@ -55,23 +69,27 @@ function getEvent(event){
             const diff = eventDate - myToday;
             const diffDays = Math.ceil(diff / (1000 * 60 * 60 * 24));
 
-            if (diffDays < 3) {
-                div.style.color = 'red';
+            if (diffDays < 5) {
+                div.style.color = event.color|| 'black';
             }
 
     li.appendChild(div) 
     li.appendChild(date)
+    li.appendChild(color)
+    li.appendChild(bold)
     numbering.appendChild(li)
 
     async function saving(id) {
         await fetch(`/saving/${id}`, {method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({reminder: div.innerHTML, date: date.value})
+        body: JSON.stringify({reminder: div.innerHTML, date: date.value, color: color.value})
     })
     showEvents
 }
 }   
-
+function textBold(bold){
+    document.execCommand(bold, false)
+}
 async function deleteEvent(id) {
     await fetch(`/delEvent/${id}`, {method: 'POST'})
     showEvents()

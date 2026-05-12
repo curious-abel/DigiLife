@@ -4,13 +4,13 @@
 
 
 <div id="container" class="row">
-    <div class="col-4 col-md-3" id="side-bar"></div>
-    <div class="col-8 col-md-9" id="note-content">
-        <button onclick="format('underline')"><i class="bi bi-type-underline"></i></button>
-        <button onclick="format('italic')"><i class="bi bi-type-italic"></i></button>
-        <button onclick="format('bold')"><i class="bi bi-type-bold"></i></button>
-        <button onclick="format('undo')"><i class="bi bi-arrow-counterclockwise"></i></button>
-        <button onclick="format('redo')"><i class="bi bi-arrow-clockwise"></i></button>
+    <div class="col-3" id="side-bar"></div>
+    <div class="col-9" id="note-content">
+        <button id="fotmat" onclick="format('underline')"><i class="bi bi-type-underline"></i></button>
+        <button id="format" onclick="format('italic')"><i class="bi bi-type-italic"></i></button>
+        <button id="format" onclick="format('bold')"><i class="bi bi-type-bold"></i></button>
+        <button id="format" onclick="format('undo')"><i class="bi bi-arrow-counterclockwise"></i></button>
+        <button id="format" onclick="format('redo')"><i class="bi bi-arrow-clockwise"></i></button>
         <input id="title" type="text" class="col-12" placeholder="title">
         <div id="content" contenteditable="true">
         </div>
@@ -39,6 +39,7 @@
         delBtn = document.createElement('button')
         btn.textContent = note.title||'no title'
         delBtn.textContent = '❌'
+        //delBtn.className = 'deletebtn'
         btn.id = 'newBtn'
         btn.classList.add('btn', 'col-9', 'btn-outline-primary');
         delBtn.classList.add('btn', 'col-3');

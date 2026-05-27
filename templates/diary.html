@@ -62,7 +62,7 @@ function getEvent(event){
     if (event.time < today) {
         deleteEvent(event.id);
     }
-    if (event.event==null) {
+    if (event.event===null) {
         deleteEvent(event.id);
     }
             const myToday = new Date();

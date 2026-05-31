@@ -257,6 +257,7 @@ def saving(id):
     reminder = Reminder.query.get_or_404(id)
     reminder.content = data.get('reminder')
     date = data.get('date')
+    print(f'this is my date{date}')
     converted_date = datetime.strptime(date, "%Y-%m-%d").date()
     reminder.exp_date = converted_date
     color = data.get('color')
@@ -282,9 +283,6 @@ def check_users():
 def about():
     return render_template('about.html')
 
-@app.route('/contact')
-def contact():
-    return render_template('contact.html')
 
 @app.route('/logout')
 @login_required

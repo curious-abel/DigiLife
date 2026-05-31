@@ -11,8 +11,8 @@
         const creatReminder = document.getElementById('createReminder')
 
 
-        window.onload = showEvents
-        async function showEvents() {
+window.onload = showEvents
+    async function showEvents() {
             const res = await fetch('/events')
             const events = await res.json()
             numbering.innerHTML = ''
@@ -56,15 +56,16 @@ function getEvent(event){
             saving(event.id)
         }, 1000)
     }
-    date.value = event.time
+    //date.value = event.time
+    
     const eventDate = new Date(event.time);
     const today = new Date().toISOString().split('T')[0];
     if (event.time < today) {
         deleteEvent(event.id);
     }
-    if (event.event===null) {
-        deleteEvent(event.id);
-    }
+
+    date.value = event.time ? event.time : today
+    
             const myToday = new Date();
             myToday.setHours(0, 0, 0, 0);
             eventDate.setHours(0, 0, 0, 0);
@@ -88,7 +89,7 @@ function getEvent(event){
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({reminder: div.innerHTML, date: date.value, color: color.value})
     })
-    showEvents
+    showEvents()
 }
 }   
 function textBold(bold){

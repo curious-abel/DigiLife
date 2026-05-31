@@ -34,7 +34,7 @@
             Install App
             </button>
             <a class="ms-auto nav-link text-white" href="{{url_for('about')}}">About</a>
-            <a class="ms-auto nav-link text-white" href="{{url_for('contact')}}">Contact</a>
+            
              {%if not current_user.is_authenticated%}
             <a class="ms-auto nav-link text-white" href="{{url_for('login')}}">Login</a>
             <a class="ms-auto nav-link text-white" href="{{url_for('register')}}">Register</a>

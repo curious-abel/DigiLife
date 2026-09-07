@@ -49,6 +49,8 @@
         //btn.textContent = note.title;
         //btn.title = note.title;   // 👈 this is the tooltip
         delBtn.onclick = (e)=> {e.stopPropagation()
+            const confirm = window.confirm("are you sure you want to delete this note?")
+            if (!confirm) return
             deleteNote(note.id)
         }
         btn.onclick = ()=> loadNote(note.id)

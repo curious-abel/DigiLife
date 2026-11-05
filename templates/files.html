@@ -1,0 +1,15 @@
+{%extends "base.html"%}
+
+{%block content%}
+
+<form method="POST" enctype="multipart/form-data">
+    <input type="file" name="file" > <br>
+    <button>save</button>
+</form>
+
+<a href="{{url_for('document')}}"><img src="/static/document.png" alt="documents"></a>
+<a href="{{url_for('image')}}"><img src="/static/image.png" alt="images"></a>
+<a href="{{url_for('audio')}}"><img src="/static/audio.png" alt="audios"></a>
+<a href="{{url_for('video')}}"><img src="/static/video.png" alt="videos"></a>
+
+{%endblock%}

@@ -1,0 +1,18 @@
+{%extends "base.html"%}
+
+{%block content%}
+
+{%for audio in audios%}
+<div>{{audio.file_name}}</div> 
+<a href="{{audio.download_url}}"><img src="/static/download.png" alt="download" width="30"></a>
+<a href="{{audio.cloudinary_url}}"><img src="/static/play.png" alt="" width="30px"></a>
+<form style="display: inline;" method="POST" action="{{ url_for('delete_file', file_id=audio.id) }}">
+    <button class="delete-links" style="border-color: red;" type="submit"><img src="/static/delete.png" alt="" width="20px"></button>
+</form>
+
+
+{%endfor%}
+
+
+
+{%endblock%}

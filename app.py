@@ -1,26 +1,38 @@
-from flask import Flask, redirect, render_template, request, url_for, flash, jsonify, json
-from models import db, User, Task, Note, Jote, Reminder
+from flask import Flask, redirect, render_template, request, url_for, flash, jsonify, json, send_from_directory, abort
+from models import db, User, Task, Note, Jote, Reminder, Files
 from flask_migrate import Migrate
 import os
+from dotenv import load_dotenv
+import cloudinary
+import cloudinary.uploader
+from werkzeug.utils import secure_filename
 from datetime import datetime
 from flask_login import current_user, login_user, login_required, LoginManager, logout_user
 
-
+load_dotenv()
 app = Flask(__name__)
 
+cloudinary.config(
+    cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME"),
+    api_key=os.getenv("CLOUDINARY_API_KEY"),
+    api_secret=os.getenv("CLOUDINARY_API_SECRET"),
+    secure=True
+)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
-##'sqlite:///note.db' 
-
+#'sqlite:///note.db' #
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 app.config['SECRET_KEY'] = app.config['SECRET_KEY'] =  os.environ.get('SECRET_KEY', 'fallback-key')
 db.init_app(app)
 migrate = Migrate(app, db)
-
+print(cloudinary.config().cloud_name)
+print(cloudinary.config().api_key)
+print(cloudinary.config().api_secret)
 login_manager = LoginManager()
 login_manager.login_view = 'login'
 login_manager.init_app(app)
-
+UPLOAD_PATH = "upload"
+os.makedirs(UPLOAD_PATH, exist_ok=True)
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
@@ -285,7 +297,95 @@ def check_users():
 def about():
     return render_template('about.html')
 
+@app.route("/files", methods=["GET", "POST"])
+def files():
+    if request.method=="POST":
+        file = request.files.get("file")
+        if not file or not file.filename:
+            return "file not selected", 400
 
+        result = cloudinary.uploader.upload(
+            file,
+            resource_type="auto",
+            folder="digilife"
+        )
+        filename = secure_filename(file.filename)
+        
+        the_path = os.path.join(UPLOAD_PATH, filename)
+        file.save(the_path)
+        files = Files(file_name=filename, date_created=datetime.now(), 
+                      cloudinary_url=result["secure_url"],
+                      public_id=result["public_id"], resource_type=result["resource_type"])
+        db.session.add(files)
+        db.session.commit()
+        return redirect(url_for("files"))
+    
+    return render_template("files.html")
+
+@app.route("/audio")
+def audio():
+    files = Files.query.order_by(Files.date_created.desc()).all()
+    audios = []
+    for i in files:
+        uploaded_audios = i.get_files("mp3")
+        if uploaded_audios:
+            audios.append(uploaded_audios)
+    return render_template("audio.html", audios = audios)
+
+@app.route("/video")
+def video():
+    files = Files.query.order_by(Files.date_created.desc()).all()
+    videos = []
+    for i in files:
+        uploaded_videos = i.get_files("mp4")
+        if uploaded_videos:
+            videos.append(uploaded_videos)
+    return render_template("video.html", videos = videos)
+
+@app.route("/document")
+def document():
+    files = Files.query.order_by(Files.date_created.desc()).all()
+    documents = []
+    for i in files:
+        uploaded_documents = i.get_files("pdf", "docx")
+        if uploaded_documents:
+            documents.append(uploaded_documents)
+    return render_template("documents.html", documents=documents)
+
+@app.route("/image")
+def image():
+    files = Files.query.order_by(Files.date_created.desc()).all()
+    images = []
+    for i in files:
+        uploaded_pictures = i.get_files("jpg", "jpeg", "png", "gif", "webp")
+        if uploaded_pictures:
+            images.append(uploaded_pictures)
+    return render_template("pictures.html", images=images)
+
+@app.route("/files/download/<int:file_id>")
+def download_file(file_id):
+    download_file = db.session.get(Files, file_id)
+    if download_file is None:
+        abort(404)
+    return send_from_directory(UPLOAD_PATH, download_file.file_name, as_attachment=True)
+
+@app.route("/files/view/<int:file_id>")
+def view_file(file_id):
+    download_file = db.session.get(Files, file_id)
+    if download_file is None:
+        abort(404)
+    return send_from_directory(UPLOAD_PATH, download_file.file_name, as_attachment=False)
+
+@app.route("/files/delete/<int:file_id>", methods=["POST"])
+def delete_file(file_id):
+    files = Files.query.get_or_404(file_id)
+    if files.public_id:
+        cloudinary.uploader.destroy(files.public_id, resource_type="image")
+
+        db.session.delete(files)
+        db.session.commit()
+    return redirect(request.referrer or url_for("files"))
+        
 @app.route('/logout')
 @login_required
 def logout():
@@ -294,9 +394,9 @@ def logout():
 
 if __name__=='__main__':
     #with app.app_context():
-        #db.drop_all()
-        #db.create_all()
+     #   db.drop_all()
+      #  db.create_all()
     port = int(os.environ.get("PORT", 10000))  # fallback to 10000 if PORT not set
     app.run(host="0.0.0.0", port=port, debug=False)
-    #app.run(debug=True)
+    app.run(debug=True)
 

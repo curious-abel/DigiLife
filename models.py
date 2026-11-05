@@ -46,3 +46,25 @@ class Reminder(db.Model):
     exp_date = db.Column(db.DateTime)
     color = db.Column(db.String(15), default='#000000')
     user_id = db.Column(db.ForeignKey('user.id'))
+
+class Files(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    file_name = db.Column(db.String(500))
+    cloudinary_url = db.Column(db.String(1000))
+    public_id = db.Column(db.String(500))
+    resource_type = db.Column(db.String(50))
+    date_created = db.Column(db.DateTime)
+    user_id = db.Column(db.ForeignKey('user.id'))
+
+    def get_files(self, *extensions):
+        extension = self.file_name.rsplit(".", 1)[-1].lower()
+
+        if extension in extensions:
+            return self
+
+    @property
+    def download_url(self):
+        return self.cloudinary_url.replace(
+            "/upload/",
+            "/upload/fl_attachment/"
+        )

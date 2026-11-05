@@ -35,16 +35,5 @@
         <input class="form-control" type="text" name="task_name" placeholder="Task Title">
         <button class="btn btn-success">create task</button>
     </form>
-    <script>
-        const delLink = document.querySelectorAll(".delete-links")
-        delLink.forEach(link=>{
-            link.addEventListener("click", (event)=>{
-                const confirm = window.confirm("do you want to delete this?")
-                if (!confirm) {
-                    event.preventDefault()
-                }
-            })
-        })
-        
-    </script>
+    
 {%endblock%}

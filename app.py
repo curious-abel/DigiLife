@@ -367,7 +367,7 @@ def image():
         if uploaded_pictures:
             images.append(uploaded_pictures)
     return render_template("pictures.html", images=images)
-
+'''
 @app.route("/files/download/<int:file_id>")
 def download_file(file_id):
     download_file = db.session.get(Files, file_id)
@@ -381,7 +381,7 @@ def view_file(file_id):
     if download_file is None:
         abort(404)
     return send_from_directory(UPLOAD_PATH, download_file.file_name, as_attachment=False)
-
+'''
 @app.route("/files/delete/<int:file_id>", methods=["POST"])
 def delete_file(file_id):
     files = Files.query.get_or_404(file_id)
@@ -399,9 +399,9 @@ def logout():
     return redirect(url_for('login'))
 
 if __name__=='__main__':
-    #with app.app_context():
+    with app.app_context():
      #   db.drop_all()
-      #  db.create_all()
+        db.create_all()
     port = int(os.environ.get("PORT", 10000))  # fallback to 10000 if PORT not set
     app.run(host="0.0.0.0", port=port, debug=False)
     app.run(debug=True)

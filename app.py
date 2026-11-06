@@ -317,8 +317,7 @@ def files():
         )
         filename = secure_filename(file.filename)
         
-        the_path = os.path.join(UPLOAD_PATH, filename)
-        file.save(the_path)
+       
         files = Files(file_name=filename, date_created=datetime.now(), 
                       cloudinary_url=result["secure_url"],
                       public_id=result["public_id"], resource_type=result["resource_type"])
@@ -399,9 +398,9 @@ def logout():
     return redirect(url_for('login'))
 
 if __name__=='__main__':
-    with app.app_context():
+    #with app.app_context():
      #   db.drop_all()
-        db.create_all()
+     #   db.create_all()
     port = int(os.environ.get("PORT", 10000))  # fallback to 10000 if PORT not set
     app.run(host="0.0.0.0", port=port, debug=False)
     app.run(debug=True)

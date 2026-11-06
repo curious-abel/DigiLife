@@ -1,7 +1,7 @@
 {%extends "base.html"%}
 
 {%block content%}
-
+<p>your audio file here</p>
 {%for audio in audios%}
 <div>{{audio.file_name}}</div> 
 <a href="{{audio.download_url}}"><img src="/static/download.png" alt="download" width="30"></a>

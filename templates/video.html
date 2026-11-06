@@ -1,6 +1,7 @@
 {%extends "base.html"%}
 
 {%block content%}
+<p>your video files here</p>
 {%for video in videos%}
 <p>{{video.file_name}}</p>
 <a href="{{video.download_url}}"><img src="/static/download.png" alt="download" width="30"></a>

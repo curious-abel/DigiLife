@@ -4,3 +4,4 @@ __pycache__/
 upload/
 instance/
 .env
+migrations_old/

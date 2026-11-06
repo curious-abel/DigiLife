@@ -1,10 +1,10 @@
 {%extends "base.html"%}
 
 {%block content%}
-
+<p>upload files</p>
 <form method="POST" enctype="multipart/form-data">
-    <input type="file" name="file" > <br>
-    <button>save</button>
+    <input type="file" name="file" > 
+    <button>upload</button>
 </form>
 
 <a href="{{url_for('document')}}"><img src="/static/document.png" alt="documents"></a>

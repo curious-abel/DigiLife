@@ -1,7 +1,7 @@
 {%extends "base.html"%}
 
 {%block content%}
-
+<p>your pictures here</p>
 {%for image in images%}
 <p>{{image.file_name}}</p>
 <a href="{{image.download_url}}"><img src="/static/download.png" alt="download" width="30"></a>

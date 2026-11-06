@@ -31,8 +31,8 @@ print(cloudinary.config().api_secret)
 login_manager = LoginManager()
 login_manager.login_view = 'login'
 login_manager.init_app(app)
-UPLOAD_PATH = "upload"
-os.makedirs(UPLOAD_PATH, exist_ok=True)
+#UPLOAD_PATH = "upload"
+#os.makedirs(UPLOAD_PATH, exist_ok=True)
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
@@ -393,10 +393,10 @@ def logout():
     return redirect(url_for('login'))
 
 if __name__=='__main__':
-    with app.app_context():
-        db.drop_all()
-        db.create_all()
-    #port = int(os.environ.get("PORT", 10000))  # fallback to 10000 if PORT not set
-    #app.run(host="0.0.0.0", port=port, debug=False)
+    #with app.app_context():
+     #   db.drop_all()
+      #  db.create_all()
+    port = int(os.environ.get("PORT", 10000))  # fallback to 10000 if PORT not set
+    app.run(host="0.0.0.0", port=port, debug=False)
     app.run(debug=True)
 

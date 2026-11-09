@@ -11,6 +11,9 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String(200), nullable=False)
     email = db.Column(db.String(50), nullable=False, unique=True)
     task = db.relationship('Task', backref='task', lazy=True)
+    jote = db.relationship('Jote', backref='jote', lazy=True)
+    reminder = db.relationship('Reminder', backref='reminder', lazy=True)
+    files = db.relationship('Files', backref='files', lazy=True)
 
     def set_password(self, password):
         self.password = generate_password_hash(password)

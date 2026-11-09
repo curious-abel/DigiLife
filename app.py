@@ -221,7 +221,8 @@ def jotter():
 
 @app.route('/notes')
 def notes():
-    notes = Jote.query.order_by(Jote.id.desc()).all()
+    notes = current_user.jote
+    #Jote.query.order_by(Jote.id.desc()).all()
     return jsonify([{'id': note.id,
                     'title': note.title,
                     'content': note.content} for note in notes])
@@ -235,7 +236,7 @@ def delete_note(id):
 
 @app.route('/create_note', methods=['POST'])
 def create_note():
-    note = Jote()
+    note = Jote(user_id=current_user.id)
     db.session.add(note)
     db.session.commit()
     return jsonify({'id': note.id})
@@ -261,12 +262,13 @@ def reminder():
     
 @app.route('/events')
 def events():
-    events = Reminder.query.order_by(Reminder.exp_date).all()
+    events = current_user.reminder
+    #Reminder.query.order_by(Reminder.exp_date).all()
     return jsonify([{'color': event.color, 'event': event.content, 'time': event.exp_date.strftime("%Y-%m-%d") if event.exp_date else None, 'id': event.id} for event in events])
 
 @app.route('/create', methods=['POST'])
 def create():
-    event = Reminder()
+    event = Reminder(user_id = current_user.id)
     db.session.add(event)
     db.session.commit()
     return jsonify({'status': 'ok'})
@@ -277,12 +279,10 @@ def saving(id):
     reminder = Reminder.query.get_or_404(id)
     reminder.content = data.get('reminder')
     date = data.get('date')
-    print(f'this is my date{date}')
     converted_date = datetime.strptime(date, "%Y-%m-%d").date()
     reminder.exp_date = converted_date
     color = data.get('color')
     reminder.color = color
-    print(reminder.color)
     db.session.commit()
     return jsonify({'status': 'ok'})
 
@@ -320,6 +320,7 @@ def files():
        
         files = Files(file_name=filename, date_created=datetime.now(), 
                       cloudinary_url=result["secure_url"],
+                      user_id=current_user.id,
                       public_id=result["public_id"], resource_type=result["resource_type"])
         db.session.add(files)
         db.session.commit()
@@ -339,7 +340,8 @@ def audio():
 
 @app.route("/video")
 def video():
-    files = Files.query.order_by(Files.date_created.desc()).all()
+    files = current_user.files
+    #Files.query.order_by(Files.date_created.desc()).all()
     videos = []
     for i in files:
         uploaded_videos = i.get_files("mp4")
@@ -349,7 +351,8 @@ def video():
 
 @app.route("/document")
 def document():
-    files = Files.query.order_by(Files.date_created.desc()).all()
+    files = current_user.files
+    #Files.query.order_by(Files.date_created.desc()).all()
     documents = []
     for i in files:
         uploaded_documents = i.get_files("pdf", "docx")
@@ -359,7 +362,8 @@ def document():
 
 @app.route("/image")
 def image():
-    files = Files.query.order_by(Files.date_created.desc()).all()
+    files = current_user.files
+    #Files.query.order_by(Files.date_created.desc()).all()
     images = []
     for i in files:
         uploaded_pictures = i.get_files("jpg", "jpeg", "png", "gif", "webp")
@@ -399,8 +403,8 @@ def logout():
 
 if __name__=='__main__':
     #with app.app_context():
-     #   db.drop_all()
-     #   db.create_all()
+        #db.drop_all()
+        #db.create_all()
     port = int(os.environ.get("PORT", 10000))  # fallback to 10000 if PORT not set
     app.run(host="0.0.0.0", port=port, debug=False)
     app.run(debug=True)

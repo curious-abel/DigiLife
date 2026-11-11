@@ -12,7 +12,7 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(50), nullable=False, unique=True)
     task = db.relationship('Task', backref='task', lazy=True)
     jote = db.relationship('Jote', backref='jote', lazy=True)
-    reminder = db.relationship('Reminder', backref='reminder', lazy=True)
+    reminder = db.relationship('Reminder', backref='reminder', lazy="dynamic")
     files = db.relationship('Files', backref='files', lazy=True)
 
     def set_password(self, password):

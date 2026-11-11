@@ -262,7 +262,7 @@ def reminder():
     
 @app.route('/events')
 def events():
-    events = current_user.reminder
+    events = current_user.reminder.order_by(Reminder.exp_date).all()
     #Reminder.query.order_by(Reminder.exp_date).all()
     return jsonify([{'color': event.color, 'event': event.content, 'time': event.exp_date.strftime("%Y-%m-%d") if event.exp_date else None, 'id': event.id} for event in events])
 
